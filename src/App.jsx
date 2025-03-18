@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+async function getAll() {
+  try {
+    const response = await fetch("https://b81774bc25d121a3.mokky.dev/users");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error, "error");
+    return error;
+  }
 }
 
-export default App
+function App() {
+  const dispatch = useDispatch();
+  const { courses, error, isLoading } = useSelector((state) => {
+    return state;
+  });
+  useEffect(() => {
+    dispatch({ type: "SET_ISLOADING", payload: true });
+    getAll()
+      .then((data) => {
+        dispatch({ type: "SET_COURSES", payload: data });
+      })
+      .catch((err) => {
+        dispatch({ type: "SET_ERROR", payload: err.message });
+      })
+      .finally(() => {
+        dispatch({ type: "SET_ISLOADING", payload: false });
+      });
+  }, [dispatch]);
+
+  return (
+    <div>
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Kata</p>}
+
+      {courses?.map((items, index) => {
+        return (
+          <ul key={index}>
+            <li>{items.username}</li>
+            <li>{items.name}</li>
+          </ul>
+        );
+      })}
+    </div>
+  );
+}
+
+export default App;

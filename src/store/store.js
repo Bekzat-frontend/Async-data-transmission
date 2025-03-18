@@ -1,5 +1,4 @@
-import { createStore } from "react-redux";
-
+import { createStore } from "redux";
 const initialState = {
   courses: [],
   error: null,
@@ -7,7 +6,16 @@ const initialState = {
 };
 
 const coursesReducer = (state = initialState, action) => {
-  return state;
+  switch (action.type) {
+    case "SET_COURSES":
+      return { ...state, courses: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload };
+    case "SET_ISLOADING":
+      return { ...state, isLoading: action.payload };
+    default:
+      return state;
+  }
 };
 
-const store = createStore(coursesReducer);
+export const store = createStore(coursesReducer);
