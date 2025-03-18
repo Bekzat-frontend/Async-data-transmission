@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "./spinner/Spinner";
 import { getAllThunk } from "./store/store";
+import { getAllById } from "./store/store";
 
 async function getAll() {
   try {
@@ -15,14 +16,15 @@ async function getAll() {
 }
 
 function App() {
+  const { courses, error, isLoading } = useSelector((state) => state);
+
   const dispatch = useDispatch();
-  const { courses, error, isLoading } = useSelector((state) => {
-    return state;
-  });
   useEffect(() => {
     dispatch(getAllThunk());
   }, []);
-
+  function getAllByIdHandle(id) {
+    dispatch(getAllById(id));
+  }
   return (
     <div>
       {isLoading ? <Spinner /> : ""}
@@ -33,6 +35,7 @@ function App() {
           <ul key={index}>
             <li>{items.username}</li>
             <li>{items.name}</li>
+            <button onClick={() => getAllByIdHandle(items.id)}> id</button>
           </ul>
         );
       })}
