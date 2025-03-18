@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Spinner from "./spinner/Spinner";
+import { getAllThunk } from "./store/store";
 
 async function getAll() {
   try {
@@ -18,23 +20,13 @@ function App() {
     return state;
   });
   useEffect(() => {
-    dispatch({ type: "SET_ISLOADING", payload: true });
-    getAll()
-      .then((data) => {
-        dispatch({ type: "SET_COURSES", payload: data });
-      })
-      .catch((err) => {
-        dispatch({ type: "SET_ERROR", payload: err.message });
-      })
-      .finally(() => {
-        dispatch({ type: "SET_ISLOADING", payload: false });
-      });
-  }, [dispatch]);
+    dispatch(getAllThunk());
+  }, []);
 
   return (
     <div>
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Kata</p>}
+      {isLoading ? <Spinner /> : ""}
+      {error ? <p>Кечириниз курс жок</p> : ""}
 
       {courses?.map((items, index) => {
         return (
